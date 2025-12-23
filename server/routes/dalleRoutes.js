@@ -28,10 +28,22 @@ router.route('/').post(async (req, res) => {
     });
 
     const image = aiResponse.data.data[0].b64_json;
-    res.status(200).json({ photo: image });
+
+    res.status(200).json({
+      success: true,
+      photo: image,
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).send(error?.response.data.error.message || 'Something went wrong');
+    console.error('OpenAI Error:', error?.response?.data || error.message);
+
+    const message =
+      error?.response?.data?.error?.message ||
+      'AI image generation failed. Please check billing or API key.';
+
+    res.status(500).json({
+      success: false,
+      message,
+    });
   }
 });
 
